@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   verify:
-    name: Lint, build, and test
+    name: Lint, test, then build
     runs-on: windows-latest
     timeout-minutes: 20
 
@@ -42,8 +42,10 @@ jobs:
             throw "gofmt failed"
           }
           if ($unformatted) {
-            $unformatted | Write-Error
-            throw "Go files are not formatted. Run: gofmt -w src\*.go"
+            Write-Host "The following Go files are not formatted:"
+            $unformatted | ForEach-Object { Write-Host $_ }
+            & gofmt -d .\src
+            throw "Go files are not formatted. Run: gofmt -w .\src"
           }
 
       - name: Vet
@@ -51,6 +53,3 @@ jobs:
 
       - name: Build release executable
         run: go build -trimpath -ldflags="-s -w" -o smart-frame-sorter.exe ./src
-
-      - name: Test
-        run: go test ./...

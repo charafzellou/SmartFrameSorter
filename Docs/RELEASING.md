@@ -29,7 +29,7 @@ Set the SmartFrameSorter package `versionInfo` and document name in `sbom.spdx.j
 $env:GOPROXY = "off"
 $env:GOSUMDB = "off"
 $env:CGO_ENABLED = "0"
-gofmt -w src\*.go
+gofmt -w .\src
 go vet ./...
 go test ./...
 ```

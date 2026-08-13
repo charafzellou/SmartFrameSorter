@@ -75,8 +75,10 @@ jobs:
             throw "gofmt failed"
           }
           if ($unformatted) {
-            $unformatted | Write-Error
-            throw "Go files are not formatted. Run: gofmt -w src\*.go"
+            Write-Host "The following Go files are not formatted:"
+            $unformatted | ForEach-Object { Write-Host $_ }
+            & gofmt -d .\src
+            throw "Go files are not formatted. Run: gofmt -w .\src"
           }
 
       - name: Vet

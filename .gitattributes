@@ -1,0 +1,33 @@
+# Keep text files deterministic across Windows and Unix by default.
+*         text=auto eol=lf
+
+# Source and configuration files use Unix line endings.
+*.go      text eol=lf
+*.mod     text eol=lf
+*.work    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.sh      text eol=lf
+*.json    text eol=lf
+*.md      text eol=lf
+.gitignore text eol=lf
+
+# Windows-native scripts use their conventional line endings.
+*.bat     text eol=crlf
+*.ps1     text eol=crlf
+
+# Distributed artifacts and media must never be line-ending normalized.
+*.exe     binary
+*.zip     binary
+*.xz      binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.webp    binary
+*.tif     binary
+*.tiff    binary
+*.bmp     binary
+*.mp4     binary
+*.ccitt_group3 binary
+*.ccitt_group4 binary

@@ -13,7 +13,7 @@ Thank you for helping improve SmartFrameSorter.
 1. Fork the repository and create a focused branch.
 2. Keep the sorter fully offline and preserve the safety guarantees documented in [Docs/DEVELOPMENT.md](Docs/DEVELOPMENT.md).
 3. Add or update tests for behavior changes.
-4. Format Go code with `gofmt -w src\*.go`.
+4. Format Go code with `gofmt -w .\src`.
 5. Run `go test ./...` from the repository root on Windows x64.
 6. Update the README and `Docs/` when user-visible behavior changes.
 7. Open a pull request explaining the problem, the approach, and how the change was verified.

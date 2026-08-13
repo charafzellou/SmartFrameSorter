@@ -32,7 +32,7 @@ The suite covers filename parsing, image grouping, timing-tolerant video groupin
 Before submitting changes, format and retest:
 
 ```powershell
-gofmt -w src\*.go
+gofmt -w .\src
 go test ./...
 ```
 
