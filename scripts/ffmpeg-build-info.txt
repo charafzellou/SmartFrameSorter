@@ -1,0 +1,11 @@
+FFmpeg version: 8.1.2
+Pinned upstream commit: 38b88335f9
+Source archive: ffmpeg-8.1.2.tar.xz
+Source SHA-256: 464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c
+Target: Windows x86-64, static executables
+License: GPL-3.0-or-later
+Network support: disabled at configure time
+External libraries: none
+Build script: scripts/build-ffmpeg-windows.sh
+ffmpeg.exe SHA-256: b2cca40cc829dd19b5fcfe38b0377fd2ea47f3ca9e1ebcb1d1df74b5b041f0dc
+ffprobe.exe SHA-256: d26906fb99643693c1cc02cd62f982b1f4cf01ea89c965dd7eb2f1cdb5e20d16

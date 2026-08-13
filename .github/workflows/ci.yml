@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, test, then build
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    env:
+      GOPROXY: "off"
+      GOSUMDB: "off"
+      CGO_ENABLED: "0"
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: "1.26.5"
+          cache: false
+
+      - name: Check formatting
+        shell: pwsh
+        run: |
+          $unformatted = & gofmt -l .\src
+          if ($LASTEXITCODE -ne 0) {
+            throw "gofmt failed"
+          }
+          if ($unformatted) {
+            Write-Host "The following Go files are not formatted:"
+            $unformatted | ForEach-Object { Write-Host $_ }
+            & gofmt -d .\src
+            throw "Go files are not formatted. Run: gofmt -w .\src"
+          }
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build release executable
+        run: go build -trimpath -ldflags="-s -w" -o smart-frame-sorter.exe ./src
