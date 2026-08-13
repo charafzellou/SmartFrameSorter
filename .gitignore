@@ -47,3 +47,6 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
+
+# Binaries and build artifacts
+smart-frame-sorter.exe

@@ -1,0 +1,107 @@
+{
+  "spdxVersion": "SPDX-2.3",
+  "dataLicense": "CC0-1.0",
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "name": "SmartFrameSorter-1.1.0-windows-x64",
+  "documentNamespace": "urn:uuid:019ffc62-e57d-74a0-a498-64abfd8c9f5e",
+  "creationInfo": {
+    "created": "2026-08-13T00:00:00Z",
+    "creators": [
+      "Tool: SmartFrameSorter release process"
+    ]
+  },
+  "packages": [
+    {
+      "name": "SmartFrameSorter",
+      "SPDXID": "SPDXRef-Package-SmartFrameSorter",
+      "versionInfo": "1.1.0",
+      "downloadLocation": "NOASSERTION",
+      "filesAnalyzed": false,
+      "licenseConcluded": "AGPL-3.0-or-later",
+      "licenseDeclared": "AGPL-3.0-or-later",
+      "copyrightText": "Copyright (C) 2026 SmartFrameSorter contributors",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "3f948c8cd0e87e0546074dfe16c6322a37d081745c5d2839690fb7789df97e57"
+        }
+      ],
+      "primaryPackagePurpose": "APPLICATION"
+    },
+    {
+      "name": "The Go Programming Language standard library",
+      "SPDXID": "SPDXRef-Package-GoStdlib",
+      "versionInfo": "1.26.5",
+      "downloadLocation": "https://go.dev/dl/",
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "BSD-3-Clause",
+      "copyrightText": "Copyright 2009 The Go Authors",
+      "primaryPackagePurpose": "LIBRARY"
+    },
+    {
+      "name": "golang.org/x/image",
+      "SPDXID": "SPDXRef-Package-GoXImage",
+      "versionInfo": "v0.34.0",
+      "downloadLocation": "https://github.com/golang/image/tree/v0.34.0",
+      "filesAnalyzed": false,
+      "licenseConcluded": "BSD-3-Clause",
+      "licenseDeclared": "BSD-3-Clause",
+      "copyrightText": "Copyright 2009 The Go Authors",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "911f8f5782931320f5b8d1160a76365b83aea6447ee6c04fa6d5591467db9dad"
+        }
+      ],
+      "primaryPackagePurpose": "LIBRARY"
+    },
+    {
+      "name": "FFmpeg custom SmartFrameSorter build",
+      "SPDXID": "SPDXRef-Package-FFmpeg",
+      "versionInfo": "8.1.2+38b88335f9.SMARTFRAMESORTER",
+      "downloadLocation": "https://ffmpeg.org/releases/ffmpeg-8.1.2.tar.xz",
+      "filesAnalyzed": false,
+      "licenseConcluded": "GPL-3.0-or-later",
+      "licenseDeclared": "GPL-3.0-or-later",
+      "copyrightText": "Copyright (c) 2000-2026 the FFmpeg developers",
+      "checksums": [
+        {
+          "algorithm": "SHA256",
+          "checksumValue": "464beb5e7bf0c311e68b45ae2f04e9cc2af88851abb4082231742a74d97b524c"
+        }
+      ],
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceType": "purl",
+          "referenceLocator": "pkg:generic/ffmpeg@8.1.2?commit=38b88335f9"
+        }
+      ],
+      "primaryPackagePurpose": "APPLICATION"
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-Package-SmartFrameSorter"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-SmartFrameSorter",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-GoStdlib"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-SmartFrameSorter",
+      "relationshipType": "DEPENDS_ON",
+      "relatedSpdxElement": "SPDXRef-Package-GoXImage"
+    },
+    {
+      "spdxElementId": "SPDXRef-Package-FFmpeg",
+      "relationshipType": "OPTIONAL_DEPENDENCY_OF",
+      "relatedSpdxElement": "SPDXRef-Package-SmartFrameSorter",
+      "comment": "FFmpeg is a separate command-line program required only when MP4 files are present."
+    }
+  ]
+}
