@@ -2,7 +2,7 @@
 
 SmartFrameSorter is a fully offline Windows tool that groups visually similar images and MP4 videos within each person's files. It copies and renames the results without moving, changing, recompressing, or deleting the originals.
 
-The sorter uses perceptual image fingerprints and sampled video frames. It does **not** use cloud services, facial recognition, or semantic AI.
+The sorter uses perceptual image fingerprints and sampled video frames. It does **not** use cloud services, facial recognition, or semantic scene recognition.
 
 ## Highlights
 

@@ -4,9 +4,9 @@
 *.building/
 
 # Generated release bundles (publish these as GitHub Release assets)
-/release/SmartFrameSorter-*-windows-x64/
-/release/SmartFrameSorter-*-windows-x64.zip
-/release/sources/SmartFrameSorter-*-source.zip
+/release/*-windows-x64/
+/release/*-windows-x64.zip
+/release/sources/*-source.zip
 /release/SHA256SUMS
 
 # Go build and test artifacts
