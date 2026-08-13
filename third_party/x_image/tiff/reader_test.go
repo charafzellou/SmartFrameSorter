@@ -13,7 +13,6 @@ import (
 	"fmt"
 	"image"
 	"io"
-	"io/ioutil"
 	"os"
 	"sort"
 	"strings"
@@ -64,7 +63,7 @@ func TestNoCompression(t *testing.T) {
 
 // TestUnpackBits tests the decoding of PackBits-encoded data.
 func TestUnpackBits(t *testing.T) {
-	var unpackBitsTests = []struct {
+	unpackBitsTests := []struct {
 		compressed   string
 		uncompressed string
 	}{{
@@ -84,7 +83,7 @@ func TestUnpackBits(t *testing.T) {
 }
 
 func TestShortBlockData(t *testing.T) {
-	b, err := ioutil.ReadFile("../testdata/bw-uncompressed.tiff")
+	b, err := io.ReadFile("../testdata/bw-uncompressed.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,7 +109,7 @@ func TestShortBlockData(t *testing.T) {
 }
 
 func TestDecodeInvalidDataType(t *testing.T) {
-	b, err := ioutil.ReadFile("../testdata/bw-uncompressed.tiff")
+	b, err := io.ReadFile("../testdata/bw-uncompressed.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -235,7 +234,7 @@ func TestDecodeCCITT(t *testing.T) {
 // TestDecodeTagOrder tests that a malformed image with unsorted IFD entries is
 // correctly rejected.
 func TestDecodeTagOrder(t *testing.T) {
-	data, err := ioutil.ReadFile("../testdata/video-001.tiff")
+	data, err := io.ReadFile("../testdata/video-001.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -253,7 +252,7 @@ func TestDecodeTagOrder(t *testing.T) {
 // TestDecompress tests that decoding some TIFF images that use different
 // compression formats result in the same pixel data.
 func TestDecompress(t *testing.T) {
-	var decompressTests = []string{
+	decompressTests := []string{
 		"bw-uncompressed.tiff",
 		"bw-deflate.tiff",
 		"bw-packbits.tiff",
@@ -299,7 +298,7 @@ func replace(src []byte, find, repl string) ([]byte, error) {
 // cause a crash.
 // Issue 10711.
 func TestZeroBitsPerSample(t *testing.T) {
-	b0, err := ioutil.ReadFile(testdataDir + "bw-deflate.tiff")
+	b0, err := io.ReadFile(testdataDir + "bw-deflate.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -309,7 +308,8 @@ func TestZeroBitsPerSample(t *testing.T) {
 	// 03 00: data type (short, or uint16)
 	// 01 00 00 00: count
 	// ?? 00 00 00: value (1 -> 0)
-	b1, err := replace(b0,
+	b1, err := replace(
+		b0,
 		"02 01 03 00 01 00 00 00 01 00 00 00",
 		"02 01 03 00 01 00 00 00 00 00 00 00",
 	)
@@ -327,7 +327,7 @@ func TestZeroBitsPerSample(t *testing.T) {
 // the data available.
 // Issue 10712
 func TestTileTooBig(t *testing.T) {
-	b0, err := ioutil.ReadFile(testdataDir + "video-001-tile-64x64.tiff")
+	b0, err := io.ReadFile(testdataDir + "video-001-tile-64x64.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -339,7 +339,8 @@ func TestTileTooBig(t *testing.T) {
 	// 01 00 00 00: count
 	// xx 00 00 00: value (0x40 -> 0x44: a wider tile consumes more data
 	// than is available)
-	b1, err := replace(b0,
+	b1, err := replace(
+		b0,
 		"42 01 03 00 01 00 00 00 40 00 00 00",
 		"42 01 03 00 01 00 00 00 44 00 00 00",
 	)
@@ -356,7 +357,8 @@ func TestTileTooBig(t *testing.T) {
 	// 03 00: data type (short, or uint16)
 	// 01 00 00 00: count
 	// xx 00 00 00: value (2 -> 1: 2 = horizontal, 1 = none)
-	b2, err := replace(b1,
+	b2, err := replace(
+		b1,
 		"3d 01 03 00 01 00 00 00 02 00 00 00",
 		"3d 01 03 00 01 00 00 00 01 00 00 00",
 	)
@@ -415,7 +417,7 @@ func TestLargeIFDEntry(t *testing.T) {
 }
 
 func TestInvalidPaletteRef(t *testing.T) {
-	contents, err := ioutil.ReadFile(testdataDir + "invalid-palette-ref.tiff")
+	contents, err := io.ReadFile(testdataDir + "invalid-palette-ref.tiff")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -427,7 +429,7 @@ func TestInvalidPaletteRef(t *testing.T) {
 // benchmarkDecode benchmarks the decoding of an image.
 func benchmarkDecode(b *testing.B, filename string) {
 	b.Helper()
-	contents, err := ioutil.ReadFile(testdataDir + filename)
+	contents, err := io.ReadFile(testdataDir + filename)
 	if err != nil {
 		b.Fatal(err)
 	}

@@ -10,7 +10,6 @@ import (
 	"image"
 	"image/png"
 	"io"
-	"io/ioutil"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -103,9 +102,10 @@ func TestHighBits(t *testing.T) {
 				srcHighBits[i] = src[i] >> 7
 			}
 
-			t.Fatalf("r=%d, numDst=%d, numSrc=%d, invert=%t:\nsrcHighBits=%d\n"+
-				"got  d=%d, s=%d, bytes=[% 02X]\n"+
-				"want d=%d, s=%d, bytes=[% 02X]",
+			t.Fatalf(
+				"r=%d, numDst=%d, numSrc=%d, invert=%t:\nsrcHighBits=%d\n"+
+					"got  d=%d, s=%d, bytes=[% 02X]\n"+
+					"want d=%d, s=%d, bytes=[% 02X]",
 				r, numDst, numSrc, invert, srcHighBits,
 				d0, s0, dst0[:numDst],
 				d1, s1, dst1[:numDst],
@@ -122,8 +122,7 @@ func BenchmarkHighBits(b *testing.B) {
 		src[i] = uint8(rng.Intn(256))
 	}
 
-	b.ResetTimer()
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		highBits(dst, src, false)
 		highBits(dst, src, true)
 	}
@@ -301,7 +300,7 @@ func testRead(t *testing.T, fileName string, sf SubFormat, align, invert, trunca
 			t.Fatalf("Open: %v", err)
 		}
 		defer f.Close()
-		gotBytes, err := ioutil.ReadAll(NewReader(f, MSB, sf, width, height, opts))
+		gotBytes, err := io.ReadAll(NewReader(f, MSB, sf, width, height, opts))
 		if err != nil {
 			t.Fatalf("ReadAll: %v", err)
 		}
@@ -382,7 +381,7 @@ func testRead(t *testing.T, fileName string, sf SubFormat, align, invert, trunca
 			t.Fatalf("Open: %v", err)
 		}
 		defer f.Close()
-		adhBytes, err := ioutil.ReadAll(NewReader(f, MSB, sf, width, AutoDetectHeight, opts))
+		adhBytes, err := io.ReadAll(NewReader(f, MSB, sf, width, AutoDetectHeight, opts))
 		if err != nil {
 			t.Fatalf("ReadAll: %v", err)
 		}

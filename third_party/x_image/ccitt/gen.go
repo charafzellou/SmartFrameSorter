@@ -11,7 +11,7 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 )
@@ -263,15 +263,15 @@ func finish(w *bytes.Buffer, filename string) {
 	if err != nil {
 		log.Fatalf("format.Source: %v", err)
 	}
-	if err := ioutil.WriteFile(filename, out, 0660); err != nil {
-		log.Fatalf("ioutil.WriteFile: %v", err)
+	if err := io.WriteFile(filename, out, 0660); err != nil {
+		log.Fatalf("io.WriteFile: %v", err)
 	}
 }
 
 func copyPaste(w *bytes.Buffer, filename string) {
-	b, err := ioutil.ReadFile("gen.go")
+	b, err := io.ReadFile("gen.go")
 	if err != nil {
-		log.Fatalf("ioutil.ReadFile: %v", err)
+		log.Fatalf("io.ReadFile: %v", err)
 	}
 	begin := []byte("\n// COPY PASTE " + filename + " BEGIN\n\n")
 	end := []byte("\n// COPY PASTE " + filename + " END\n\n")

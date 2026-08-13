@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -241,7 +240,8 @@ loop:
 				y := i / m0.Stride
 				x := (i - y*m0.Stride) / 4
 				i = 4 * (y*m0.Stride + x)
-				t.Errorf("%s: at (%d, %d):\ngot  %02x %02x %02x %02x\nwant %02x %02x %02x %02x",
+				t.Errorf(
+					"%s: at (%d, %d):\ngot  %02x %02x %02x %02x\nwant %02x %02x %02x %02x",
 					tc, x, y,
 					m0.Pix[i+0], m0.Pix[i+1], m0.Pix[i+2], m0.Pix[i+3],
 					m1.Pix[i+0], m1.Pix[i+1], m1.Pix[i+2], m1.Pix[i+3],
@@ -280,7 +280,7 @@ func TestDuplicateVP8X(t *testing.T) {
 }
 
 func benchmarkDecode(b *testing.B, filename string) {
-	data, err := ioutil.ReadFile("../testdata/blue-purple-pink-large." + filename + ".webp")
+	data, err := io.ReadFile("../testdata/blue-purple-pink-large." + filename + ".webp")
 	if err != nil {
 		b.Fatal(err)
 	}

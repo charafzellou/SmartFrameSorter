@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
-	"io/ioutil"
+	"io"
 	"os"
 	"testing"
 	"time"
@@ -136,8 +136,8 @@ func BenchmarkEncode(b *testing.B) {
 	}
 	s := img.Bounds().Size()
 	b.SetBytes(int64(s.X * s.Y * 4))
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		Encode(ioutil.Discard, img)
+
+	for b.Loop() {
+		Encode(io.Discard, img)
 	}
 }
