@@ -1,0 +1,131 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Verify, package, and publish
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+
+    env:
+      GOPROXY: "off"
+      GOSUMDB: "off"
+      CGO_ENABLED: "0"
+
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: "1.26.5"
+          cache: false
+
+      - name: Validate release tag and metadata
+        id: release
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          if ($env:RELEASE_TAG -cnotmatch '^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$') {
+            throw "Release tag must use stable SemVer: vMAJOR.MINOR.PATCH"
+          }
+
+          $tagType = (& git cat-file -t "refs/tags/$env:RELEASE_TAG").Trim()
+          if ($LASTEXITCODE -ne 0 -or $tagType -ne "tag") {
+            throw "Release tag must be annotated: $env:RELEASE_TAG"
+          }
+
+          $version = $env:RELEASE_TAG.Substring(1)
+          $sbom = Get-Content -LiteralPath .\sbom.spdx.json -Raw | ConvertFrom-Json
+          $projectPackage = $sbom.packages | Where-Object SPDXID -eq "SPDXRef-Package-SmartFrameSorter"
+          if ($null -eq $projectPackage -or $projectPackage.versionInfo -ne $version) {
+            throw "SBOM SmartFrameSorter version must match tag version $version"
+          }
+
+          $notes = (& git for-each-ref --format='%(contents)' "refs/tags/$env:RELEASE_TAG") -join "`n"
+          if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($notes)) {
+            throw "Annotated release tag must contain release notes"
+          }
+          Set-Content -LiteralPath .\release-notes.md -Value $notes.TrimEnd() -Encoding utf8NoBOM
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Check formatting
+        shell: pwsh
+        run: |
+          $goFiles = Get-ChildItem -Path .\src -Filter *.go -File | ForEach-Object FullName
+          $unformatted = & gofmt -l $goFiles
+          if ($LASTEXITCODE -ne 0) {
+            throw "gofmt failed"
+          }
+          if ($unformatted) {
+            $unformatted | Write-Error
+            throw "Go files are not formatted. Run: gofmt -w src\*.go"
+          }
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Build release executable
+        run: go build -trimpath -ldflags="-s -w" -o smart-frame-sorter.exe ./src
+
+      - name: Test
+        run: go test ./...
+
+      - name: Package release
+        shell: pwsh
+        run: .\scripts\package-release.ps1 -Version '${{ steps.release.outputs.version }}'
+
+      - name: Verify published-asset checksums
+        shell: pwsh
+        run: |
+          $version = '${{ steps.release.outputs.version }}'
+          $assets = @(
+            @{ Path = "release/SmartFrameSorter-$version-windows-x64.zip"; Name = "SmartFrameSorter-$version-windows-x64.zip" },
+            @{ Path = "release/sources/SmartFrameSorter-$version-source.zip"; Name = "SmartFrameSorter-$version-source.zip" },
+            @{ Path = "release/sources/ffmpeg-8.1.2.tar.xz"; Name = "ffmpeg-8.1.2.tar.xz" }
+          )
+          $checksumLines = Get-Content -LiteralPath .\release\SHA256SUMS
+          foreach ($asset in $assets) {
+            $expectedLine = @($checksumLines | Where-Object { $_ -match "  $([regex]::Escape($asset.Name))$" })
+            if ($expectedLine.Count -ne 1) {
+              throw "SHA256SUMS must contain exactly one entry for $($asset.Name)"
+            }
+            $expected = ($expectedLine -split '  ', 2)[0]
+            $actual = (Get-FileHash -LiteralPath $asset.Path -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($actual -ne $expected) {
+              throw "SHA-256 mismatch for $($asset.Path)"
+            }
+          }
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $version = '${{ steps.release.outputs.version }}'
+          gh release create '${{ github.ref_name }}' `
+            "release/SmartFrameSorter-$version-windows-x64.zip" `
+            "release/sources/SmartFrameSorter-$version-source.zip" `
+            "release/sources/ffmpeg-8.1.2.tar.xz" `
+            "release/SHA256SUMS" `
+            --verify-tag `
+            --title "SmartFrameSorter $version" `
+            --notes-file .\release-notes.md
