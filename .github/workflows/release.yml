@@ -70,8 +70,7 @@ jobs:
       - name: Check formatting
         shell: pwsh
         run: |
-          $goFiles = Get-ChildItem -Path .\src -Filter *.go -File | ForEach-Object FullName
-          $unformatted = & gofmt -l $goFiles
+          $unformatted = & gofmt -l .\src
           if ($LASTEXITCODE -ne 0) {
             throw "gofmt failed"
           }
