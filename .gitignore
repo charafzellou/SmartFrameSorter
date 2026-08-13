@@ -1,32 +1,49 @@
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# SmartFrameSorter-generated output
+/output-images/
+/output-videos/
+*.building/
 
-# Test binary, built with `go test -c`
+# Generated release bundles (publish these as GitHub Release assets)
+/release/SmartFrameSorter-*-windows-x64/
+/release/SmartFrameSorter-*-windows-x64.zip
+/release/sources/SmartFrameSorter-*-source.zip
+/release/SHA256SUMS
+
+# Go build and test artifacts
 *.test
-
-# Code coverage profiles and other test artifacts
 *.out
 coverage.*
 *.coverprofile
 profile.cov
+cpu.prof
+mem.prof
 
-# Dependency directories (remove the comment below to include it)
-# vendor/
+# Ignore incidental Windows executables, but retain the offline binaries that
+# are part of this repository and are verified by release_test.go.
+*.exe
+!/smart-frame-sorter.exe
+!/ffmpeg/ffmpeg.exe
+!/ffmpeg/ffprobe.exe
 
-# Go workspace file
-go.work
+# Local Go workspace checksum file
 go.work.sum
 
-# env file
+# Local configuration and secrets
 .env
+.env.*
+!.env.example
 
-# Editor/IDE
-# .idea/
-# .vscode/
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
